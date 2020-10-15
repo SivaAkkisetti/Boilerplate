@@ -6,9 +6,10 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:jsx-a11y/recommended",
     "plugin:prettier/recommended",
-    "prettier/react"
+    "prettier/react",
+    "plugin:cypress/recommended"
   ],
-  "plugins": ["jsx-a11y", "prettier", "import"],
+  "plugins": ["jsx-a11y", "prettier", "import", "cypress"],
   "rules": {
     "comma-dangle": ["error", { "functions": "ignore" }],
     "arrow-parens": ["error", "as-needed"],
