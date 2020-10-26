@@ -5,14 +5,19 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --coverage --watchAll=false",
     "lint": "eslint . --ext .ts,.tsx --color",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "api": "node ./mock-api/server.js",
     "cypress:start-app": "set PORT=3030 && react-scripts start",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "cypress:e2e": "start-server-and-test cypress:start-app http://localhost:3030 cypress:run"
+    "cypress:e2e": "start-server-and-test cypress:start-app http://localhost:3030 cypress:run",
+    "coverage": "npm run coverage:clean && npm test && npm run cypress:e2e",
+    "postcoverage": "npm run coverage:combine",
+    "coverage:clean": "rm -rf .nyc_output coverage coverage-cypress coverage-combined reports || true",
+    "coverage:copy": "node scripts/coverage.js",
+    "coverage:combine": "npm run coverage:copy && npx nyc merge reports .nyc_output/out.json && npx nyc report --reporter lcov --reporter text --report-dir coverage-combined"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -47,9 +52,11 @@
     "typescript": "~3.8.2"
   },
   "devDependencies": {
+    "@cypress/code-coverage": "^3.8.2",
     "@types/styled-components": "^5.1.4",
     "@typescript-eslint/eslint-plugin": "^4.4.1",
     "@typescript-eslint/parser": "^4.4.1",
+    "babel-plugin-istanbul": "^6.0.0",
     "cypress": "^5.4.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-prettier": "^6.12.0",
@@ -60,5 +67,18 @@
     "json-server": "^0.16.2",
     "prettier": "^2.1.2",
     "start-server-and-test": "^1.11.5"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "<rootDir>/src/**/*.{ts,tsx}",
+      "!<rootDir>/node_modules/",
+      "!<rootDir>/src/react-app-env.d.ts",
+      "!<rootDir>/src/index.tsx",
+      "!<rootDir>/src/serviceWorker.ts",
+      "!<rootDir>/src/store/index.ts"
+    ]
+  },
+  "nyc": {
+    "report-dir": "coverage-cypress"
   }
 }
