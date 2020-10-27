@@ -1,44 +1,100 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using redux-typescript template.
 
-## Available Scripts
+[TOC]
 
-In the project directory, you can run:
+## For what is the boilerplate
 
-### `yarn start`
+For any user who doesn't want to waste time configuring a baseline project.
+
+### How to use it
+
+In order to use this boilerplate as a baseline for your project fork it from bitbucket:
+
+- Go to a repository, click + on the leftmost global sidebar and select Fork this repository at the bottom of the lists.
+
+- In the Fork dialog, define the options for your fork.
+
+### What technologies contains
+
+- [TypeScript](https://www.typescriptlang.org/)
+- [Redux](https://github.com/reduxjs/react-redux)
+- [Redux-toolkit](https://github.com/reduxjs/redux-toolkit#readme)
+- [StyledComponents](https://styled-components.com/)
+- [json-server](https://github.com/typicode/json-server)
+- [Jest](https://jestjs.io/)
+- [Cypress](https://github.com/cypress-io/cypress)
+- [Lint](https://eslint.org/)
+- [Prettier](https://prettier.io/)
+- [husky](https://typicode.github.io/husky/#/)
+
+### Scripts
+
+```json
+{
+  "start": "react-scripts start",
+  "build": "react-scripts build",
+  "test": "react-scripts test --coverage --watchAll=false",
+  "lint": "eslint . --ext .ts,.tsx --color",
+  "lint:fix": "eslint . --ext .ts,.tsx --fix",
+  "pretty": "prettier --write \"{cypress,src}/**/*.{js,jsx,ts,tsx,json}\"",
+  "api": "node ./mock-api/server.js",
+  "cypress:start-app": "set PORT=3030 && set BROWSER=none && react-scripts -r @cypress/instrument-cra start",
+  "cypress:open": "cypress open",
+  "cypress:run": "cypress run",
+  "cypress:e2e": "start-server-and-test cypress:start-app http://localhost:3030 cypress:run",
+  "coverage": "npm run coverage:clean && npm test && npm run cypress:e2e",
+  "postcoverage": "npm run coverage:combine",
+  "coverage:clean": "rm -rf .nyc_output coverage coverage-cypress coverage-combined reports || true",
+  "coverage:copy": "node scripts/coverage.js",
+  "coverage:combine": "npm run coverage:copy && npx nyc merge reports .nyc_output/out.json && npx nyc report --reporter lcov --reporter text --report-dir coverage-combined"
+}
+```
+
+#### `npm start`
 
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+The page will reload if you make edits. You will also see any lint errors in the console.
 
-### `yarn test`
+#### `npm test`
 
-Launches the test runner in the interactive watch mode.<br />
+Launches the test runner.<br />
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `yarn build`
+#### `npm build`
 
 Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+It correctly bundles React in production mode and optimizes the build for the best performance. The build is minified and the filenames include the hashes.<br />
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `yarn eject`
+#### `npm run api`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Runs a full fake REST API using `db.json` file.<br />
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+See the section about [mock server](https://www.npmjs.com/package/json-server#getting-started) for more information.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+#### `npm run cypress:start-app`
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Start the application in port 3030.
 
-## Learn More
+#### `npm run cypress:open`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Opens the Cypress Test Runner.<br />
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+See the section about [open options](https://docs.cypress.io/guides/guides/command-line.html#cypress-open) for more information.
+
+#### `npm run cypress:run`
+
+Runs Cypress tests to completion. By default, `cypress run` will run all tests headlessly in the Electron browser.<br />
+
+See the section about [run options](https://docs.cypress.io/guides/guides/command-line.html#cypress-run) for more information.
+
+#### `npm run cypress:e2e`
+
+Runs scripts `cypress:start-app` and `cypress:run`.
+
+#### `npm run coverage`
+
+Collects, print and export test coverage of the whole application, this includes unit and e2e tests.
