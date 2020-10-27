@@ -1,0 +1,80 @@
+image: node:12.13.0
+definitions:
+  steps:
+    - step: &mirror
+        name: Mirror
+        script:
+          - chmod +x ./scripts/mirror.sh
+          - ./scripts/mirror.sh
+    - step: &lint
+        name: Lint
+        caches:
+          - node
+        script:
+          - npm install
+          - npm run lint
+    - step: &test-unit
+        name: Unit Tests
+        caches:
+          - node
+        script:
+          - npm install
+          - npm test
+        artifacts:
+          - coverage/**
+          - .nyc_output/**
+    - step: &test-integration
+        name: Integration Tests
+        caches:
+          - node
+          - cypress
+        image: cypress/base:10
+        script:
+          - npm install
+          - npm run cypress:e2e
+        artifacts:
+          - coverage-cypress/**
+          - .nyc_output/**
+    - step: &build
+        name: Build
+        caches:
+          - npm
+        script:
+          - npm install
+          - npm run build
+    - step: &clean-coverage
+        name: Reset coverage
+        script:
+          - npm run coverage:clean
+    - step: &coverage-combine
+        name: App coverage
+        caches:
+          - npm
+        script:
+          - npm install
+          - npm run coverage:combine
+        artifacts:
+          - coverage-combined/lcov-report/**
+  caches:
+    node: $HOME/.npm
+    cypress: $HOME/.cache/Cypress
+pipelines:
+default:
+    - step: *clean-coverage
+    - parallel:
+        - step: *lint
+        - step: *test-unit
+        - step: *test-integration
+        - step: *build
+    - step: *coverage-combine
+  branches:
+    master:
+      - step: *clean-coverage
+      - parallel:
+          - step: *lint
+          - step: *test-unit
+          - step: *test-integration
+      - parallel:
+          - step: *coverage-combine
+          - step: *mirror
+          - step: *build
