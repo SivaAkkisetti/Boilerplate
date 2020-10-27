@@ -19,7 +19,7 @@ definitions:
           - node
         script:
           - npm install
-          - npm run cover:unit
+          - npm test
         artifacts:
           - coverage/**
           - .nyc_output/**
@@ -31,7 +31,7 @@ definitions:
         image: cypress/base:10
         script:
           - npm install
-          - npm run cover:integration
+          - npm run cypress:e2e
         artifacts:
           - coverage-cypress/**
           - .nyc_output/**
@@ -45,20 +45,16 @@ definitions:
     - step: &clean-coverage
         name: Reset coverage
         script:
-          - npm run cover:clean
-        artifacts:
-          - coverage/**
-          - .nyc_output/**
-    - step: &coverage
+          - npm run coverage:clean
+    - step: &coverage-combine
         name: App coverage
         caches:
           - npm
         script:
           - npm install
-          - npm run cover:merge
-          - npm run cover:report
+          - npm run coverage:combine
         artifacts:
-          - coverage/lcov-report/**
+          - coverage-combined/lcov-report/**
   caches:
     node: $HOME/.npm
     cypress: $HOME/.cache/Cypress
@@ -70,7 +66,7 @@ default:
         - step: *test-unit
         - step: *test-integration
         - step: *build
-    - step: *coverage
+    - step: *coverage-combine
   branches:
     master:
       - step: *clean-coverage
@@ -79,6 +75,6 @@ default:
           - step: *test-unit
           - step: *test-integration
       - parallel:
-          - step: *coverage
+          - step: *coverage-combine
           - step: *mirror
           - step: *build
